@@ -1,4 +1,26 @@
+import { NextRequest, NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.json();
+    const name = formData.name.toLowerCase().replace(/ /g, "-");
+
+    // Define the directory and file paths
+    const resumeDir = path.join(process.cwd(), "src", "app", name);
+    const pageFilePath = path.join(resumeDir, "page.tsx");
+
+    // Ensure the resume directory exists
+    if (!fs.existsSync(resumeDir)) {
+      fs.mkdirSync(resumeDir, { recursive: true });
+    }
+
+    // Prepare skills as an array
+    const skillsArray = formData.skills.split(',').map((skill: string) => skill.trim());
+
+    // Create the `page.tsx` file with embedded data
+    const pageContent = `
       "use client";
 
       import { HackathonCard } from "@/components/hackathon-card";
@@ -11,60 +33,10 @@
       import Link from "next/link";
       import Markdown from "react-markdown";
 
-      const DATA = {
-  "name": "",
-  "initials": "",
-  "url": "",
-  "location": "",
-  "locationLink": "",
-  "description": "",
-  "summary": "",
-  "avatarUrl": "",
-  "skills": [
-    ""
-  ],
-  "work": [
-    {
-      "company": "",
-      "href": "",
-      "title": "",
-      "location": "",
-      "logoUrl": "",
-      "start": "",
-      "end": "",
-      "description": ""
-    }
-  ],
-  "education": [],
-  "projects": [],
-  "hackathons": [],
-  "contact": {
-    "email": "",
-    "tel": "",
-    "social": {
-      "GitHub": {
-        "name": "GitHub",
-        "url": "",
-        "icon": ""
-      },
-      "LinkedIn": {
-        "name": "LinkedIn",
-        "url": "",
-        "icon": ""
-      },
-      "X": {
-        "name": "X",
-        "url": "",
-        "icon": ""
-      },
-      "Youtube": {
-        "name": "Youtube",
-        "url": "",
-        "icon": ""
-      }
-    }
-  }
-};
+      const DATA = ${JSON.stringify({
+        ...formData,
+        skills: skillsArray,
+      }, null, 2)};
 
       const BLUR_FADE_DELAY = 0.04;
 
@@ -79,7 +51,7 @@
                       delay={BLUR_FADE_DELAY}
                       className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
                       yOffset={8}
-                      text={`Hi, I'm ${DATA.name.split(" ")[0]} 👋`}
+                      text={\`Hi, I'm \${DATA.name.split(" ")[0]} 👋\`}
                     />
                     <BlurFadeText
                       className="max-w-[600px] md:text-xl"
@@ -124,7 +96,7 @@
                       subtitle={work.title}
                       href={work.href}
                       badges={work.badges}
-                      period={`${work.start} - ${work.end ?? "Present"}`}
+                      period={\`\${work.start} - \${work.end ?? "Present"}\`}
                       description={work.description}
                     />
                   </BlurFade>
@@ -148,7 +120,7 @@
                       altText={education.school}
                       title={education.school}
                       subtitle={education.degree}
-                      period={`${education.start} - ${education.end}`}
+                      period={\`\${education.start} - \${education.end}\`}
                     />
                   </BlurFade>
                 ))}
@@ -280,4 +252,14 @@
           </main>
         );
       }
-    
+    `;
+
+    // Write the page content to the file
+    fs.writeFileSync(pageFilePath, pageContent);
+
+    return NextResponse.json({ message: "Resume created successfully!" });
+  } catch (error) {
+    console.error("Error creating resume:", error);
+    return NextResponse.json({ message: "Failed to create resume." }, { status: 500 });
+  }
+}
