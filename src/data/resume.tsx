@@ -41,7 +41,7 @@ export const DATA = {
       },
       LinkedIn: {
         name: "LinkedIn",
-        url: "https://www.linkedin.com/in/tylerdipolito/",
+        url: "https://www.linkedin.com/in/tyler-dipolito",
         icon: Icons.linkedin,
         navbar: true,
       },
@@ -110,15 +110,15 @@ export const DATA = {
       degree: "Degree Goes Here",
       logoUrl: "/youtube.png",
       start: "2014",
-      end: "2018",
+      end: "Present",
     },
     {
       school: "Land O' Lakes High School",
       href: "https://landolakes.com",
       degree: "High School Diploma",
       logoUrl: "/lol.png",
-      start: "2018",
-      end: "2020",
+      start: "2003",
+      end: "2007",
     },
   ],
   projects: [
@@ -144,36 +144,12 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      image: "",
-      video: "",
-    },
-    {
-      title: "Campos Law FL",
-      href: "https://camposlawfl.com",
-      dates: "June 2023 - Present",
-      active: true,
-      description:
-        "Created a legal platform where clients can book appointments with top lawyers. The website is optimized for user experience and integrates various legal resources.",
-      technologies: [
-        "WordPress",
-        "Elementor",
-        "JavaScript",
-        "CSS",
-        "Google Analytics",
-      ],
-      links: [
-        {
-          type: "Website",
-          href: "https://camposlawfl.com",
-          icon: <Icons.globe className="size-3" />,
-        },
-      ],
-      image: "",
+      image: "/r2m.png",
       video: "",
     },
     {
       title: "Reaction Labs",
-      href: "https://reactionlabs.com",
+      href: "https://reactionlabs.io",
       dates: "April 2023 - Present",
       active: true,
       description:
@@ -193,7 +169,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      image: "",
+      image: "/reactionlabs.png",
       video: "",
     },
     {
@@ -218,7 +194,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      image: "",
+      image: "/kash.png",
       video: "",
     },
     {
@@ -242,7 +218,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      image: "",
+      image: "/rhino.png",
       video: "",
     },
   ],
