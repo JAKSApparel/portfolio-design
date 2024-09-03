@@ -4,7 +4,7 @@ import { HomeIcon, NotebookIcon } from "lucide-react";
 export const DATA = {
   name: "Tammy Biggerstaff",
   initials: "TB",
-  url: "https://yourdomain.com/tammybiggerstaff",
+  url: "https://tammybiggerstaff.com",
   location: "Tampa, FL",
   locationLink: "https://www.google.com/maps/place/tampa",
   description:
@@ -67,7 +67,7 @@ export const DATA = {
       badges: [],
       location: "Tampa, FL",
       title: "Marketing Manager",
-      logoUrl: "/unitedwaterrestoration.png",
+      logoUrl: "/uwr.png",
       start: "January 2015",
       end: "December 2017",
       description:
@@ -75,6 +75,7 @@ export const DATA = {
     },
     {
       company: "Independent Consultant",
+      href: "https://independentconsultant.com", // Placeholder link
       location: "Tampa, FL",
       title: "Consultant",
       logoUrl: "/consultant.png",
