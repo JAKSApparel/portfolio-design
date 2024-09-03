@@ -65,7 +65,7 @@ export default function TammyPage() {
                 altText={work.company}
                 title={work.company}
                 subtitle={work.title}
-                href={work.href}
+                href={work.href || "#"} // Default to "#" if href is missing
                 badges={work.badges}
                 period={`${work.start} - ${work.end ?? "Present"}`}
                 description={work.description}
@@ -86,7 +86,7 @@ export default function TammyPage() {
             >
               <ResumeCard
                 key={education.school}
-                href={education.href}
+                href={education.href || "#"} // Default to "#" if href is missing
                 logoUrl={education.logoUrl}
                 altText={education.school}
                 title={education.school}
