@@ -11,7 +11,7 @@ import Markdown from "react-markdown";
 
 const BLUR_FADE_DELAY = 0.04;
 
-export default function TammyPage() {
+export default function Page() {
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <section id="hero">
@@ -66,7 +66,7 @@ export default function TammyPage() {
                 title={work.company}
                 subtitle={work.title}
                 href={work.href || "#"} // Default to "#" if href is missing
-                badges={work.badges}
+                badges={work.badges || []} // Default to empty array if badges is missing
                 period={`${work.start} - ${work.end ?? "Present"}`}
                 description={work.description}
               />
@@ -86,7 +86,7 @@ export default function TammyPage() {
             >
               <ResumeCard
                 key={education.school}
-                href={education.href || "#"} // Default to "#" if href is missing
+                href={education.href}
                 logoUrl={education.logoUrl}
                 altText={education.school}
                 title={education.school}
