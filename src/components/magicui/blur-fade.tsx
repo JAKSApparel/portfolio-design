@@ -14,7 +14,7 @@ interface BlurFadeProps {
   delay?: number;
   yOffset?: number;
   inView?: boolean;
-  inViewMargin?: string; // Expecting a string initially
+  inViewMargin?: string; // This is removed as it's not supported
   blur?: string;
 }
 
@@ -26,15 +26,12 @@ const BlurFade = ({
   delay = 0,
   yOffset = 6,
   inView = false,
-  inViewMargin = "0px 0px -50px 0px", // Default valid CSS margin string
   blur = "6px",
 }: BlurFadeProps) => {
   const ref = useRef(null);
 
-  // Ensure inViewMargin is a valid string and convert it if needed
-  const margin = inViewMargin; // Keep this as a valid CSS margin string
-
-  const inViewResult = useInView(ref, { once: true, rootMargin: margin }); // Use rootMargin with a valid string
+  // Use the hook without rootMargin, only with 'once' or other supported options
+  const inViewResult = useInView(ref, { once: true }); 
   const isInView = !inView || inViewResult;
   
   const defaultVariants: Variants = {
