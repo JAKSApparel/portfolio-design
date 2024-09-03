@@ -1,279 +1,256 @@
-"use client";
+import { GetStaticPaths, GetStaticProps } from 'next';
+import fs from 'fs';
+import path from 'path';
+import BlurFadeText from "@/components/magicui/blur-fade-text";
+import BlurFade from "@/components/magicui/blur-fade";
+import { ResumeCard } from "@/components/resume-card";
+import { ProjectCard } from "@/components/project-card";
+import { HackathonCard } from "@/components/hackathon-card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import Markdown from "react-markdown";
+import Link from "next/link";
 
-import { useState } from "react";
+export const getStaticPaths: GetStaticPaths = async () => {
+  const resumeDir = path.join(process.cwd(), "src", "app", "resumes");
+  const files = fs.readdirSync(resumeDir);
+  const paths = files.map((file) => ({
+    params: { slug: file },
+  }));
 
-export default function CreateResumePage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    initials: "",
-    url: "",
-    location: "",
-    locationLink: "",
-    description: "",
-    summary: "",
-    avatarUrl: "",
-    skills: "",
-    navbar: [],
-    contact: {
-      email: "",
-      tel: "",
-      social: {
-        GitHub: { name: "GitHub", url: "", icon: "" },
-        LinkedIn: { name: "LinkedIn", url: "", icon: "" },
-        X: { name: "X", url: "", icon: "" },
-        Youtube: { name: "Youtube", url: "", icon: "" },
-        email: { name: "Send Email", url: "", icon: "" },
-      },
-    },
-    work: [],
-    education: [],
-    projects: [],
-    hackathons: [],
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  return {
+    paths,
+    fallback: 'blocking', // fallback true for dynamic generation
   };
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const response = await fetch("/api/create-resume", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { slug } = params!;
+  const dataFilePath = path.join(process.cwd(), "src", "app", "resumes", slug as string, "data.ts");
 
-    if (response.ok) {
-      alert("Resume created successfully!");
-    } else {
-      alert("Failed to create resume.");
-    }
+  // If file doesn't exist, return 404
+  if (!fs.existsSync(dataFilePath)) {
+    return { notFound: true };
+  }
+
+  const { DATA } = await import(`../../resumes/${slug}/data`);
+
+  return {
+    props: { DATA },
   };
+};
+
+export default function Page({ DATA }: { DATA: any }) {
+  const BLUR_FADE_DELAY = 0.04;
 
   return (
-    <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Create Your Resume</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Personal Information */}
-        <div>
-          <label className="block font-medium">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
+    <main className="flex flex-col min-h-[100dvh] space-y-10">
+      <section id="hero">
+        <div className="mx-auto w-full max-w-2xl space-y-8">
+          <div className="gap-2 flex justify-between">
+            <div className="flex-col flex flex-1 space-y-1.5">
+              <BlurFadeText
+                delay={BLUR_FADE_DELAY}
+                className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
+                yOffset={8}
+                text={`Hi, I'm ${DATA.name.split(" ")[0]} 👋`}
+              />
+              <BlurFadeText
+                className="max-w-[600px] md:text-xl"
+                delay={BLUR_FADE_DELAY}
+                text={DATA.description}
+              />
+            </div>
+            <BlurFade delay={BLUR_FADE_DELAY}>
+              <Avatar className="size-28 border">
+                <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
+                <AvatarFallback>{DATA.initials}</AvatarFallback>
+              </Avatar>
+            </BlurFade>
+          </div>
         </div>
-        <div>
-          <label className="block font-medium">Initials</label>
-          <input
-            type="text"
-            name="initials"
-            value={formData.initials}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
+      </section>
+      <section id="about">
+        <BlurFade delay={BLUR_FADE_DELAY * 3}>
+          <h2 className="text-xl font-bold">About</h2>
+        </BlurFade>
+        <BlurFade delay={BLUR_FADE_DELAY * 4}>
+          <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+            {DATA.summary}
+          </Markdown>
+        </BlurFade>
+      </section>
+      <section id="work">
+        <div className="flex min-h-0 flex-col gap-y-3">
+          <BlurFade delay={BLUR_FADE_DELAY * 5}>
+            <h2 className="text-xl font-bold">Work Experience</h2>
+          </BlurFade>
+          {DATA.work.map((work: any, id: number) => (
+            <BlurFade
+              key={work.company}
+              delay={BLUR_FADE_DELAY * 6 + id * 0.05}
+            >
+              <ResumeCard
+                key={work.company}
+                logoUrl={work.logoUrl}
+                altText={work.company}
+                title={work.company}
+                subtitle={work.title}
+                href={work.href}
+                badges={work.badges}
+                period={`${work.start} - ${work.end ?? "Present"}`}
+                description={work.description}
+              />
+            </BlurFade>
+          ))}
         </div>
-        <div>
-          <label className="block font-medium">Website URL</label>
-          <input
-            type="url"
-            name="url"
-            value={formData.url}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
+      </section>
+      <section id="education">
+        <div className="flex min-h-0 flex-col gap-y-3">
+          <BlurFade delay={BLUR_FADE_DELAY * 7}>
+            <h2 className="text-xl font-bold">Education</h2>
+          </BlurFade>
+          {DATA.education.map((education: any, id: number) => (
+            <BlurFade
+              key={education.school}
+              delay={BLUR_FADE_DELAY * 8 + id * 0.05}
+            >
+              <ResumeCard
+                key={education.school}
+                href={education.href}
+                logoUrl={education.logoUrl}
+                altText={education.school}
+                title={education.school}
+                subtitle={education.degree}
+                period={`${education.start} - ${education.end}`}
+              />
+            </BlurFade>
+          ))}
         </div>
-        <div>
-          <label className="block font-medium">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
+      </section>
+      <section id="skills">
+        <div className="flex min-h-0 flex-col gap-y-3">
+          <BlurFade delay={BLUR_FADE_DELAY * 9}>
+            <h2 className="text-xl font-bold">Skills</h2>
+          </BlurFade>
+          <div className="flex flex-wrap gap-1">
+            {DATA.skills.map((skill: string, id: number) => (
+              <BlurFade key={skill} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
+                <Badge key={skill}>{skill}</Badge>
+              </BlurFade>
+            ))}
+          </div>
         </div>
-        <div>
-          <label className="block font-medium">Location Link</label>
-          <input
-            type="url"
-            name="locationLink"
-            value={formData.locationLink}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
+      </section>
+      <section id="projects">
+        <div className="space-y-12 w-full py-12">
+          <BlurFade delay={BLUR_FADE_DELAY * 11}>
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
+                  My Projects
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Check out my latest work
+                </h2>
+                <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  I&apos;ve worked on a variety of projects, from simple
+                  websites to complex web applications. Here are a few of my
+                  favorites.
+                </p>
+              </div>
+            </div>
+          </BlurFade>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
+            {DATA.projects.map((project: any, id: number) => (
+              <BlurFade
+                key={project.title}
+                delay={BLUR_FADE_DELAY * 12 + id * 0.05}
+              >
+                <ProjectCard
+                  href={project.href}
+                  key={project.title}
+                  title={project.title}
+                  description={project.description}
+                  dates={project.dates}
+                  tags={project.technologies}
+                  image={project.image}
+                  video={project.video}
+                  links={project.links}
+                />
+              </BlurFade>
+            ))}
+          </div>
         </div>
-        <div>
-          <label className="block font-medium">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          ></textarea>
+      </section>
+      <section id="hackathons">
+        <div className="space-y-12 w-full py-12">
+          <BlurFade delay={BLUR_FADE_DELAY * 13}>
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
+                  Hackathons
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  I like building things
+                </h2>
+                <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  During my time in university, I attended{" "}
+                  {DATA.hackathons.length}+ hackathons. People from around the
+                  country would come together and build incredible things in 2-3
+                  days. It was eye-opening to see the endless possibilities
+                  brought to life by a group of motivated and passionate
+                  individuals.
+                </p>
+              </div>
+            </div>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 14}>
+            <ul className="mb-4 ml-4 divide-y divide-dashed border-l">
+              {DATA.hackathons.map((project: any, id: number) => (
+                <BlurFade
+                  key={project.title + project.dates}
+                  delay={BLUR_FADE_DELAY * 15 + id * 0.05}
+                >
+                  <HackathonCard
+                    title={project.title}
+                    description={project.description}
+                    location={project.location}
+                    dates={project.dates}
+                    image={project.image}
+                    links={project.links}
+                  />
+                </BlurFade>
+              ))}
+            </ul>
+          </BlurFade>
         </div>
-        <div>
-          <label className="block font-medium">Summary</label>
-          <textarea
-            name="summary"
-            value={formData.summary}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          ></textarea>
+      </section>
+      <section id="contact">
+        <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">
+          <BlurFade delay={BLUR_FADE_DELAY * 16}>
+            <div className="space-y-3">
+              <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
+                Contact
+              </div>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                Get in Touch
+              </h2>
+              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Want to chat? Just shoot me a dm{" "}
+                <Link
+                  href={DATA.contact.social.X.url}
+                  className="text-blue-500 hover:underline"
+                >
+                  with a direct question on twitter
+                </Link>{" "}
+                and I&apos;ll respond whenever I can. I will ignore all
+                soliciting.
+              </p>
+            </div>
+          </BlurFade>
         </div>
-        <div>
-          <label className="block font-medium">Avatar URL</label>
-          <input
-            type="text"
-            name="avatarUrl"
-            value={formData.avatarUrl}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Skills (comma-separated)</label>
-          <input
-            type="text"
-            name="skills"
-            value={formData.skills}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-
-        {/* Social Media Links */}
-        <h2 className="text-xl font-semibold">Social Links</h2>
-        <div>
-          <label className="block font-medium">GitHub URL</label>
-          <input
-            type="url"
-            name="contact.social.GitHub.url"
-            value={formData.contact.social.GitHub.url}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">LinkedIn URL</label>
-          <input
-            type="url"
-            name="contact.social.LinkedIn.url"
-            value={formData.contact.social.LinkedIn.url}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">X URL</label>
-          <input
-            type="url"
-            name="contact.social.X.url"
-            value={formData.contact.social.X.url}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Youtube URL</label>
-          <input
-            type="url"
-            name="contact.social.Youtube.url"
-            value={formData.contact.social.Youtube.url}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-
-        {/* Work Experience */}
-        <h2 className="text-xl font-semibold">Work Experience</h2>
-        {/* Add multiple work experiences here */}
-        <div>
-          <label className="block font-medium">Company</label>
-          <input
-            type="text"
-            name="work[0].company"
-            value={formData.work[0]?.company || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Location</label>
-          <input
-            type="text"
-            name="work[0].location"
-            value={formData.work[0]?.location || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Title</label>
-          <input
-            type="text"
-            name="work[0].title"
-            value={formData.work[0]?.title || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Logo URL</label>
-          <input
-            type="text"
-            name="work[0].logoUrl"
-            value={formData.work[0]?.logoUrl || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Start Date</label>
-          <input
-            type="text"
-            name="work[0].start"
-            value={formData.work[0]?.start || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">End Date</label>
-          <input
-            type="text"
-            name="work[0].end"
-            value={formData.work[0]?.end || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Description</label>
-          <textarea
-            name="work[0].description"
-            value={formData.work[0]?.description || ""}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          ></textarea>
-        </div>
-
-        {/* Similar sections for education, projects, and hackathons */}
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Create Resume
-        </button>
-      </form>
-    </div>
+      </section>
+    </main>
   );
 }

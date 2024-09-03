@@ -1,283 +1,103 @@
+import { Cloud, Lock, RefreshCw, Fingerprint } from 'lucide-react';
 
-      "use client";
+const features = [
+  {
+    name: 'Easy Resume Creation',
+    description:
+      'Generate professional resumes with just a few clicks using our user-friendly interface.',
+    icon: Cloud,
+  },
+  {
+    name: 'Customizable Templates',
+    description:
+      'Choose from a variety of templates to match your style and the job you are applying for.',
+    icon: Lock,
+  },
+  {
+    name: 'Instant PDF Export',
+    description:
+      'Download your resume in PDF format instantly, ready to send to potential employers.',
+    icon: RefreshCw,
+  },
+  {
+    name: 'Secure Data',
+    description:
+      'Your personal data is securely stored and only accessible to you.',
+    icon: Fingerprint,
+  },
+];
 
-      import { HackathonCard } from "@/components/hackathon-card";
-      import BlurFade from "@/components/magicui/blur-fade";
-      import BlurFadeText from "@/components/magicui/blur-fade-text";
-      import { ProjectCard } from "@/components/project-card";
-      import { ResumeCard } from "@/components/resume-card";
-      import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-      import { Badge } from "@/components/ui/badge";
-      import Link from "next/link";
-      import Markdown from "react-markdown";
+export default function HomePage() {
+  return (
+    <main className="flex flex-col min-h-screen space-y-10 px-6">
+      <section className="pt-14 text-center">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
+          Welcome to Resupage
+        </h1>
+        <p className="mt-6 text-lg leading-8 text-muted-foreground">
+          The easiest way to create professional resumes. Start building your career today.
+        </p>
+        <div className="mt-10 flex justify-center gap-x-6">
+          <a
+            href="#"
+            className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-opacity-90"
+          >
+            Get Started
+          </a>
+          <a href="#" className="text-sm font-semibold leading-6 text-foreground">
+            Learn More <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
 
-      const DATA = {
-  "name": "",
-  "initials": "",
-  "url": "",
-  "location": "",
-  "locationLink": "",
-  "description": "",
-  "summary": "",
-  "avatarUrl": "",
-  "skills": [
-    ""
-  ],
-  "work": [
-    {
-      "company": "",
-      "href": "",
-      "title": "",
-      "location": "",
-      "logoUrl": "",
-      "start": "",
-      "end": "",
-      "description": ""
-    }
-  ],
-  "education": [],
-  "projects": [],
-  "hackathons": [],
-  "contact": {
-    "email": "",
-    "tel": "",
-    "social": {
-      "GitHub": {
-        "name": "GitHub",
-        "url": "",
-        "icon": ""
-      },
-      "LinkedIn": {
-        "name": "LinkedIn",
-        "url": "",
-        "icon": ""
-      },
-      "X": {
-        "name": "X",
-        "url": "",
-        "icon": ""
-      },
-      "Youtube": {
-        "name": "Youtube",
-        "url": "",
-        "icon": ""
-      }
-    }
-  }
-};
+      <section className="max-w-7xl mx-auto grid grid-cols-1 gap-y-10 lg:grid-cols-2 lg:gap-x-12">
+        {features.map((feature) => (
+          <div key={feature.name} className="relative pl-16">
+            <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+              <feature.icon aria-hidden="true" className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold leading-8 text-foreground">
+              {feature.name}
+            </h3>
+            <p className="mt-2 text-base leading-7 text-muted-foreground">
+              {feature.description}
+            </p>
+          </div>
+        ))}
+      </section>
 
-      const BLUR_FADE_DELAY = 0.04;
+      <section className="max-w-7xl mx-auto text-center py-24">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          What Our Users Say
+        </h2>
+        <div className="mt-10 grid grid-cols-1 gap-y-8 lg:grid-cols-2 lg:gap-x-12">
+          {/* Replace this with actual testimonials */}
+          <blockquote className="text-lg font-semibold text-muted-foreground">
+            <p>"Resupage made it so easy to create a stunning resume. I got the job I wanted!"</p>
+            <footer className="mt-4 text-sm text-foreground">- Jane Doe, Marketing Specialist</footer>
+          </blockquote>
+          <blockquote className="text-lg font-semibold text-muted-foreground">
+            <p>"The customizable templates are a game-changer. Highly recommend Resupage!"</p>
+            <footer className="mt-4 text-sm text-foreground">- John Smith, Software Engineer</footer>
+          </blockquote>
+        </div>
+      </section>
 
-      export default function Page() {
-        return (
-          <main className="flex flex-col min-h-[100dvh] space-y-10">
-            <section id="hero">
-              <div className="mx-auto w-full max-w-2xl space-y-8">
-                <div className="gap-2 flex justify-between">
-                  <div className="flex-col flex flex-1 space-y-1.5">
-                    <BlurFadeText
-                      delay={BLUR_FADE_DELAY}
-                      className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
-                      yOffset={8}
-                      text={`Hi, I'm ${DATA.name.split(" ")[0]} 👋`}
-                    />
-                    <BlurFadeText
-                      className="max-w-[600px] md:text-xl"
-                      delay={BLUR_FADE_DELAY}
-                      text={DATA.description}
-                    />
-                  </div>
-                  <BlurFade delay={BLUR_FADE_DELAY}>
-                    <Avatar className="size-28 border">
-                      <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
-                      <AvatarFallback>{DATA.initials}</AvatarFallback>
-                    </Avatar>
-                  </BlurFade>
-                </div>
-              </div>
-            </section>
-            <section id="about">
-              <BlurFade delay={BLUR_FADE_DELAY * 3}>
-                <h2 className="text-xl font-bold">About</h2>
-              </BlurFade>
-              <BlurFade delay={BLUR_FADE_DELAY * 4}>
-                <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-                  {DATA.summary}
-                </Markdown>
-              </BlurFade>
-            </section>
-            <section id="work">
-              <div className="flex min-h-0 flex-col gap-y-3">
-                <BlurFade delay={BLUR_FADE_DELAY * 5}>
-                  <h2 className="text-xl font-bold">Work Experience</h2>
-                </BlurFade>
-                {DATA.work.map((work, id) => (
-                  <BlurFade
-                    key={work.company}
-                    delay={BLUR_FADE_DELAY * 6 + id * 0.05}
-                  >
-                    <ResumeCard
-                      key={work.company}
-                      logoUrl={work.logoUrl}
-                      altText={work.company}
-                      title={work.company}
-                      subtitle={work.title}
-                      href={work.href}
-                      badges={work.badges}
-                      period={`${work.start} - ${work.end ?? "Present"}`}
-                      description={work.description}
-                    />
-                  </BlurFade>
-                ))}
-              </div>
-            </section>
-            <section id="education">
-              <div className="flex min-h-0 flex-col gap-y-3">
-                <BlurFade delay={BLUR_FADE_DELAY * 7}>
-                  <h2 className="text-xl font-bold">Education</h2>
-                </BlurFade>
-                {DATA.education.map((education, id) => (
-                  <BlurFade
-                    key={education.school}
-                    delay={BLUR_FADE_DELAY * 8 + id * 0.05}
-                  >
-                    <ResumeCard
-                      key={education.school}
-                      href={education.href}
-                      logoUrl={education.logoUrl}
-                      altText={education.school}
-                      title={education.school}
-                      subtitle={education.degree}
-                      period={`${education.start} - ${education.end}`}
-                    />
-                  </BlurFade>
-                ))}
-              </div>
-            </section>
-            <section id="skills">
-              <div className="flex min-h-0 flex-col gap-y-3">
-                <BlurFade delay={BLUR_FADE_DELAY * 9}>
-                  <h2 className="text-xl font-bold">Skills</h2>
-                </BlurFade>
-                <div className="flex flex-wrap gap-1">
-                  {DATA.skills.map((skill, id) => (
-                    <BlurFade key={skill} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
-                      <Badge key={skill}>{skill}</Badge>
-                    </BlurFade>
-                  ))}
-                </div>
-              </div>
-            </section>
-            <section id="projects">
-              <div className="space-y-12 w-full py-12">
-                <BlurFade delay={BLUR_FADE_DELAY * 11}>
-                  <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                    <div className="space-y-2">
-                      <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
-                        My Projects
-                      </div>
-                      <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                        Check out my latest work
-                      </h2>
-                      <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                        I&apos;ve worked on a variety of projects, from simple
-                        websites to complex web applications. Here are a few of my
-                        favorites.
-                      </p>
-                    </div>
-                  </div>
-                </BlurFade>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
-                  {DATA.projects.map((project, id) => (
-                    <BlurFade
-                      key={project.title}
-                      delay={BLUR_FADE_DELAY * 12 + id * 0.05}
-                    >
-                      <ProjectCard
-                        href={project.href}
-                        key={project.title}
-                        title={project.title}
-                        description={project.description}
-                        dates={project.dates}
-                        tags={project.technologies}
-                        image={project.image}
-                        video={project.video}
-                        links={project.links}
-                      />
-                    </BlurFade>
-                  ))}
-                </div>
-              </div>
-            </section>
-            <section id="hackathons">
-              <div className="space-y-12 w-full py-12">
-                <BlurFade delay={BLUR_FADE_DELAY * 13}>
-                  <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                    <div className="space-y-2">
-                      <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
-                        Hackathons
-                      </div>
-                      <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                        I like building things
-                      </h2>
-                      <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                        During my time in university, I attended {" "}
-                        {DATA.hackathons.length}+ hackathons. People from around the
-                        country would come together and build incredible things in 2-3
-                        days. It was eye-opening to see the endless possibilities
-                        brought to life by a group of motivated and passionate
-                        individuals.
-                      </p>
-                    </div>
-                  </div>
-                </BlurFade>
-                <BlurFade delay={BLUR_FADE_DELAY * 14}>
-                  <ul className="mb-4 ml-4 divide-y divide-dashed border-l">
-                    {DATA.hackathons.map((project, id) => (
-                      <BlurFade
-                        key={project.title + project.dates}
-                        delay={BLUR_FADE_DELAY * 15 + id * 0.05}
-                      >
-                        <HackathonCard
-                          title={project.title}
-                          description={project.description}
-                          location={project.location}
-                          dates={project.dates}
-                          image={project.image}
-                          links={project.links}
-                        />
-                      </BlurFade>
-                    ))}
-                  </ul>
-                </BlurFade>
-              </div>
-            </section>
-            <section id="contact">
-              <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">
-                <BlurFade delay={BLUR_FADE_DELAY * 16}>
-                  <div className="space-y-3">
-                    <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
-                      Contact
-                    </div>
-                    <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                      Get in Touch
-                    </h2>
-                    <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                      Want to chat? Just shoot me a dm {" "}
-                      <Link
-                        href={DATA.contact.social.X.url}
-                        className="text-blue-500 hover:underline"
-                      >
-                        with a direct question on twitter
-                      </Link> 
-                      and I&apos;ll respond whenever I can. I will ignore all
-                      soliciting.
-                    </p>
-                  </div>
-                </BlurFade>
-              </div>
-            </section>
-          </main>
-        );
-      }
-    
+      <section className="max-w-7xl mx-auto text-center py-24">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Create Your Resume Now
+        </h2>
+        <p className="mt-6 text-lg leading-8 text-muted-foreground">
+          Join thousands of professionals who have already built their resumes with Resupage.
+        </p>
+        <a
+          href="/create-resume"
+          className="mt-10 inline-block rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-opacity-90"
+        >
+          Start Your Resume
+        </a>
+        
+      </section>
+    </main>
+  );
+}
