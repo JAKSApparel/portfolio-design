@@ -52,7 +52,7 @@ export const DATA = {
     {
       company: "911 Restoration Company",
       href: "https://911restoration.com",
-      badges: [],
+      badges: [], // Ensure badges is always an array
       location: "Tampa, FL",
       title: "Marketing Consultant",
       logoUrl: "/911restoration.png",
@@ -64,7 +64,7 @@ export const DATA = {
     {
       company: "United Water Restoration Company",
       href: "https://unitedwaterrestoration.com",
-      badges: [],
+      badges: [], // Ensure badges is always an array
       location: "Tampa, FL",
       title: "Marketing Manager",
       logoUrl: "/uwr.png",
@@ -76,6 +76,7 @@ export const DATA = {
     {
       company: "Independent Consultant",
       href: "https://independentconsultant.com", // Placeholder link
+      badges: [], // Ensure badges is always an array
       location: "Tampa, FL",
       title: "Consultant",
       logoUrl: "/consultant.png",
