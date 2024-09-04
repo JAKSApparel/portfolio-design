@@ -253,6 +253,7 @@ export async function POST(req: NextRequest) {
                 </div>
               </BlurFade>
             </div>
+            
           </section>
         </main>
       );
