@@ -1,35 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
-export async function POST(req: NextRequest) {
-  try {
-    const formData = await req.json();
-    const slug = formData.name.toLowerCase().replace(/ /g, "-");
-
-    // Define the directory and file paths
-    const resumeDir = path.join(process.cwd(), "src", "app", "resumes", slug);
-    const dataFilePath = path.join(resumeDir, "data.ts");
-    const pageFilePath = path.join(resumeDir, "page.tsx");
-
-    // Ensure the resume directory exists
-    if (!fs.existsSync(resumeDir)) {
-      fs.mkdirSync(resumeDir, { recursive: true });
-    }
-
-    // Prepare skills as an array
-    const skillsArray = formData.skills.split(',').map((skill: string) => skill.trim());
-
-    // Create the `data.ts` file with resume data
-    const dataContent = `export const DATA = ${JSON.stringify({
-      ...formData,
-      skills: skillsArray,
-    }, null, 2)};`;
-
-    fs.writeFileSync(dataFilePath, dataContent);
-
-    // Create the `page.tsx` file with embedded data
-    const pageContent = `
     "use client";
 
     import { HackathonCard } from "@/components/hackathon-card";
@@ -56,7 +25,7 @@ export async function POST(req: NextRequest) {
                     delay={BLUR_FADE_DELAY}
                     className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
                     yOffset={8}
-                    text={\`Hi, I'm \${DATA.name.split(" ")[0]} 👋\`}
+                    text={`Hi, I'm ${DATA.name.split(" ")[0]} 👋`}
                   />
                   <BlurFadeText
                     className="max-w-[600px] md:text-xl"
@@ -101,7 +70,7 @@ export async function POST(req: NextRequest) {
                     subtitle={work.title}
                     href={work.href}
                     badges={work.badges}
-                    period={\`\${work.start} - \${work.end ?? "Present"}\`}
+                    period={`${work.start} - ${work.end ?? "Present"}`}
                     description={work.description}
                   />
                 </BlurFade>
@@ -125,7 +94,7 @@ export async function POST(req: NextRequest) {
                     altText={education.school}
                     title={education.school}
                     subtitle={education.degree}
-                    period={\`\${education.start} - \${education.end}\`}
+                    period={`${education.start} - ${education.end}`}
                   />
                 </BlurFade>
               ))}
@@ -257,14 +226,4 @@ export async function POST(req: NextRequest) {
         </main>
       );
     }
-    `;
-
-    // Write the `page.tsx` file to the directory
-    fs.writeFileSync(pageFilePath, pageContent);
-
-    return NextResponse.json({ message: "Resume created successfully!" });
-  } catch (error) {
-    console.error("Error creating resume:", error);
-    return NextResponse.json({ message: "Failed to create resume." }, { status: 500 });
-  }
-}
+    
